@@ -44,17 +44,17 @@ def download_file_with_progress(url, save_path):
             if chunk:
                 file.write(chunk)
                 bar.update(len(chunk))
-    print(f"✅ Downloaded: {os.path.basename(save_path)}")
+    print(f" Downloaded: {os.path.basename(save_path)}")
 
 def scrape_papers(year):
     """Scrape papers for a specific year"""
-    print(f"📡 Scraping: {BASE_URL}/paper_files/paper/{year}")
+    print(f" Scraping: {BASE_URL}/paper_files/paper/{year}")
     
     # Fetch the year page
     year_url = f"{BASE_URL}/paper_files/paper/{year}"
     page_content = fetch_document_with_retries(year_url)
     if not page_content:
-        print(f"❌ Failed to fetch year {year}")
+        print(f" Failed to fetch year {year}")
         return
     
     soup = BeautifulSoup(page_content, 'html.parser')
@@ -64,18 +64,18 @@ def scrape_papers(year):
     paper_links = [urljoin(BASE_URL, link['href']) for link in paper_links if '/paper_files/paper/' in link['href']]
     
     if not paper_links:
-        print(f"⚠ No paper links found for {year}")
+        print(f" No paper links found for {year}")
         return
     
-    print(f"📄 Found {len(paper_links)} paper links for {year}")
+    print(f" Found {len(paper_links)} paper links for {year}")
     
     # Scrape each paper page
     for paper_url in paper_links:
-        print(f"📝 Scraping paper page: {paper_url}")
+        print(f" Scraping paper page: {paper_url}")
         
         paper_page_content = fetch_document_with_retries(paper_url)
         if not paper_page_content:
-            print(f"❌ Failed to fetch paper page {paper_url}")
+            print(f" Failed to fetch paper page {paper_url}")
             continue
         
         soup = BeautifulSoup(paper_page_content, 'html.parser')
@@ -85,7 +85,7 @@ def scrape_papers(year):
         pdf_links = [urljoin(BASE_URL, link['href']) for link in pdf_links if link['href'].endswith('.pdf')]
         
         if not pdf_links:
-            print(f"⚠ No PDFs found for paper {paper_url}")
+            print(f" No PDFs found for paper {paper_url}")
             continue
         
         # Download PDFs using threading
@@ -100,7 +100,7 @@ def main():
     for year in range(2023, 2023 - NUM_YEARS, -1):
         scrape_papers(year)
 
-    print("✅ All downloads completed.")
+    print(" All downloads completed.")
 
 if __name__ == "__main__":
     main()
